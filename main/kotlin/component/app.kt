@@ -2,42 +2,60 @@ package component
 
 
 import data.*
+import kotlinx.html.js.onClickFunction
 import org.w3c.dom.events.Event
 import react.*
+import react.dom.button
 import react.dom.h1
 
 interface AppProps : RProps {
     var students: Array<Student>
+
 }
 
 interface AppState : RState {
-    var lessons: Array<Subject>
+    var subject: Array<Subject>
     var presents: Array<Array<Boolean>>
+    var newsubject: String
+
 }
 
 class App : RComponent<AppProps, AppState>() {
     override fun componentWillMount() {
-        state.presents = Array(state.lessons.size) {
+        state.subject = subjectList
+        state.presents = Array(state.subject.size) {
             Array(props.students.size) { false }
         }
-    }
-
-    override fun componentDidMount() {
 
     }
+
+fun nl (){
+    
+}
 
 
     override fun RBuilder.render() {
         h1 { +"App" }
-
+        applesson(subjectList)
+        button{
+            +"Добавить предмет"
+            attrs.onClickFunction = {
+                setState {
+                    subject += Subject(newsubject)
+                    presents += arrayOf(
+                        Array(props.students.size){false}
+                    )
+                }
+            }
+        }
         lessonListFull(
-            state.lessons,
+            state.subject,
             props.students,
             state.presents,
             onClickLessonFull
         )
         studentListFull(
-            state.lessons,
+            state.subject,
             props.students,
             transform(state.presents),
             onClickStudentFull
@@ -78,5 +96,6 @@ class App : RComponent<AppProps, AppState>() {
 fun RBuilder.app(
     students: Array<Student>
 ) = child(App::class) {
+
     attrs.students = students
 }
